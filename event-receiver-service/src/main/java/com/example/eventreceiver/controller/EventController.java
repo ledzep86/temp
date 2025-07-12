@@ -1,5 +1,6 @@
 package com.example.eventreceiver.controller;
 
+import com.example.eventreceiver.model.EventRequest;
 import com.example.eventreceiver.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -21,13 +21,12 @@ public class EventController {
     private List<String> validCustomerTiers;
 
     @PostMapping("/receive")
-    public ResponseEntity<String> receiveEvent(@RequestBody String eventPayload, HttpServletRequest request) {
-        String customerTier = request.getHeader("X-Customer-Tier");
+    public ResponseEntity<String> receiveEvent(@RequestBody EventRequest eventRequest, @RequestHeader(value = "X-Customer-Tier", required = false) String customerTier) {
         if (customerTier == null || !validCustomerTiers.contains(customerTier)) {
             return new ResponseEntity<>("Invalid or missing X-Customer-Tier header", HttpStatus.BAD_REQUEST);
         }
 
-        eventService.processEvent(eventPayload);
+        eventService.processEvent(eventRequest.getBody());
         return new ResponseEntity<>("Event received successfully", HttpStatus.OK);
     }
 }
