@@ -12,7 +12,10 @@ spring:
   application:
     name: event-receiver-service
 
+server:
+  port: 8080
+  
 logging:
   level:
     root: INFO
-    com.example.eventreceiver: DEBUG
+    com.example.eventreceiver: DEBUG    
